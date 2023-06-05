@@ -5,14 +5,17 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 
+sia = SentimentIntensityAnalyzer()
+
 def count_years(text):
     """
     This function counts the appearences of an expression with 4 numbers 
     and replaces the award names with the number of awards.
+    
     :args:
-    text: A string of any size
-    :returs:
-
+        text: A string of any size
+    :returns:
+        the number of times the regex pattern was found
     """
     if isinstance(text, str):
         years = re.findall(r"\d{4}", text)
@@ -68,7 +71,7 @@ def basic_clean(df):
     It also calculates sentiment scores from the description and readability index.
     """
     # droping unnecessary columns
-    df.drop(columns=["number_of_pages","characters","settings","id","publisher","original_title","worldcat_redirect_link","link", "cover_link", "author_link","amazon_redirect_link", "worldcat_redirect_link","isbn", "isbn13", "asin"], inplace = True)
+    df.drop(columns=["characters","settings","id","publisher","original_title","worldcat_redirect_link","link", "cover_link", "author_link","amazon_redirect_link", "worldcat_redirect_link","isbn", "isbn13", "asin"], inplace = True)
     df.drop_duplicates(inplace=True)
 
     # checking title formating
@@ -149,7 +152,6 @@ def basic_clean(df):
     df.subgenre = df.subgenre.replace(genre_counts[genre_counts <= 20].index, "Other")
         
     # Calculate the compound sentiment score for each description
-    sia = SentimentIntensityAnalyzer()
     df['compound_score'] = df['description'].fillna('').apply(lambda x: sia.polarity_scores(x)['compound'])
     
     # Calculate complexity
@@ -163,11 +165,15 @@ def basic_clean(df):
 def prep_model(df):
     """
     This function prepares the data for going through the model.
+
     :args:
-    df: a dataframe to be preped for clustering
+        df: a dataframe to be preped for clustering
+
+    :returns:
+        df_model: dataframe ready for training
     """
     # droping unnecessary columns
-    df.drop(columns=["year_published","review_count","title","author","recommended_books","books_in_series"], inplace = True)
+    df.drop(columns=["review_count","title","author","recommended_books","books_in_series"], inplace = True)
 
     ## transforming columns so model can understand
     scaler = StandardScaler()
@@ -187,12 +193,43 @@ def prep_model(df):
   
     return df_model
 
+def prep_my_data(df):
+    """
+    This function prepares the data for going through the model.
+    :args:
+        df: a dataframe to be preped for clustering
+    """
+
+    # correcting genre type
+    dict_genre = {"Fiction":0, "Fantasy":1, "Romance":2, "Young Adult":3, "Thriller/Mystery":4,
+              "Sequential Art":5,"Science Fiction":6,"Classics":7,"Horror":8,"Poetry":9,"Novels":10,
+              "Humor":11,"Adult":12,"Westerns":13,"Other":14,"Drama":15,"Anthologies":16
+    }
+    df["subgenre"] = df["subgenre"].replace(dict_genre)
+
+    # Calculate the compound sentiment score for each description
+    df['compound_score'] = df['description'].apply(lambda x: sia.polarity_scores(x)['compound'])
+    
+    # Calculate complexity
+    df['coleman_liau_index'] = df['description'].apply(coleman_liau_index)
+
+    # transforming columns so model can understand
+    scaler = StandardScaler()
+    df["rating_count_stand"] = scaler.fit_transform(df["rating_count"].values.reshape(-1, 1))
+
+    df["average_rating"] = df["average_rating"].str.replace(",", ".")
+    df["average_rating"] = df["average_rating"].astype(float)
+
+    df.drop(columns=["description","rating_count"], inplace=True)
+  
+    return df
+
 def save_dataframe(df, name):
     """
     This function save a dataframe under a given name in the data folder.
-    :arg:
-    df: dataframe to be saved
-    name: name to save under
+    :args:
+        df: dataframe to be saved
+        name: name to save under
     """
     df.to_csv(f'data/{name}.csv', index=False)
     pass
