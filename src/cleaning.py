@@ -9,6 +9,10 @@ def count_years(text):
     """
     This function counts the appearences of an expression with 4 numbers 
     and replaces the award names with the number of awards.
+    :args:
+    text: A string of any size
+    :returs:
+
     """
     if isinstance(text, str):
         years = re.findall(r"\d{4}", text)
@@ -30,8 +34,8 @@ def extract_genre(text):
 
 def coleman_liau_index(text):
     """
-    The Coleman-Liau Index provides an estimate of the grade level required to understand the text, 
-    based on characters instead of syllables.
+    This function calculates the Coleman-Liau Index wich provides an estimate of the grade level 
+    required to understand the text, based on characters instead of syllables.
 
     Low Readability: Coleman-Liau Index score below 6
     Typically suitable for elementary school-level readers.
@@ -64,8 +68,8 @@ def basic_clean(df):
     It also calculates sentiment scores from the description and readability index.
     """
     # droping unnecessary columns
-    df.drop(columns=["characters","settings","id","publisher","original_title","worldcat_redirect_link","link", "cover_link", "author_link","amazon_redirect_link", "worldcat_redirect_link","isbn", "isbn13", "asin"], inplace = True)
-    df.drop_duplicates()
+    df.drop(columns=["number_of_pages","characters","settings","id","publisher","original_title","worldcat_redirect_link","link", "cover_link", "author_link","amazon_redirect_link", "worldcat_redirect_link","isbn", "isbn13", "asin"], inplace = True)
+    df.drop_duplicates(inplace=True)
 
     # checking title formating
     df['title'] = df['title'].str.encode('ascii', 'ignore').str.decode('ascii')
@@ -158,20 +162,21 @@ def basic_clean(df):
 
 def prep_model(df):
     """
+    This function prepares the data for going through the model.
+    :args:
+    df: a dataframe to be preped for clustering
     """
     # droping unnecessary columns
-    df.drop(columns=["review_count","title","author","recommended_books","books_in_series"], inplace = True)
-
+    df.drop(columns=["year_published","review_count","title","author","recommended_books","books_in_series"], inplace = True)
 
     ## transforming columns so model can understand
-
     scaler = StandardScaler()
     df["rating_count_stand"] = scaler.fit_transform(df["rating_count"].values.reshape(-1, 1))
     
     #final drop
     df_model = df[df["classification"] == "Literature"].copy()
     df_model.drop(columns=["rating_count","classification","five_star_ratings","four_star_ratings","three_star_ratings","two_star_ratings","one_star_ratings"], inplace=True)
-    df_model.dropna()
+    df_model.dropna(inplace=True)
 
     # correcting genre type
     dict_genre = {"Fiction":0, "Fantasy":1, "Romance":2, "Young Adult":3, "Thriller/Mystery":4,
@@ -182,6 +187,12 @@ def prep_model(df):
   
     return df_model
 
-def save_dataframe(df,name):
+def save_dataframe(df, name):
+    """
+    This function save a dataframe under a given name in the data folder.
+    :arg:
+    df: dataframe to be saved
+    name: name to save under
+    """
     df.to_csv(f'data/{name}.csv', index=False)
     pass

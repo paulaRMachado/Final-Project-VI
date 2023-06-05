@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 data/My_Goodreads
 *zip
+image/capas
+*pdf
