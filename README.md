@@ -7,16 +7,19 @@ In this project, I aim to develop a book recommendation system by utilizing mach
 
 The goal of my project is to use the power of machine learning to group books into clusters based on their attributes such as average rating, number of pages, awards, year published, subgenre, and other relevant features. By applying K-means clustering, I can identify similar books within each cluster and provide personalized recommendations based on Goodreads users' preferences.
 
+## Description
 The process involves preprocessing the Goodreads dataset, including data cleaning, feature engineering, and normalization. I will utilize the K-means algorithm to group books into clusters. The centroids of these clusters will act as representative points for the books within them.
 
 By recommending books based on the clusters and their centroids, I aim to get personalized and more accurate book suggestions. Users can provide a book they enjoyed, and the recommendation system will identify the relevant cluster and recommend books from that cluster, enhancing their reading experience and introducing them to new titles within their preferred characteristics.
 
-## Description
-
 ### Data Characteristics
-Tableau
+Check the link for Tableau to see some
 
 ### Preprocessing
+
+For the model I will only use books classified as LITERATURE.
+
+-- sjd --
 
 Finally I drew a correlation matrix to check if I had any features very closely related to one another that would make clustering more difficult:
 ![](image/plots/correlation_heatmap_prev.png)
@@ -25,6 +28,17 @@ As rating_count was closely related to all the star ratings, I decided to drop t
 
 This is the final matrix:
 ![](image/plots/correlation_heatmap_final.png)
+
+Final features are:
+ 1. Series: If the book belongs to a sequel collection
+ 2. Average rating: Taken from the Goodreads users
+ 3. Number of pages
+ 4. Awards: Number of relevant awards cited in Goodreads
+ 5. Year published
+ 6. Genre
+ 7. Compound Score: NLTK
+ 8. Coleman Liau Index
+ 9. Rating count
 
 ### Clustering
 In order to find adequate the number of clusters I used 3 different tecniques.

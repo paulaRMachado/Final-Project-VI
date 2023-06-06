@@ -225,7 +225,7 @@ def prep_my_data(df):
     df["average_rating"] = df["average_rating"].str.replace(",", ".")
     df["average_rating"] = df["average_rating"].astype(float)
 
-    df.drop(columns=["description","rating_count"], inplace=True)
+    df.drop(columns=["description","rating_count","title"], inplace=True)
   
     return df
 
