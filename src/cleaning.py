@@ -2,8 +2,8 @@ import pandas as pd
 import re
 from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize, sent_tokenize
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+from src.visualizing import matrix_corr 
 
 sia = SentimentIntensityAnalyzer()
 
@@ -71,7 +71,7 @@ def basic_clean(df):
     It also calculates sentiment scores from the description and readability index.
     """
     # droping unnecessary columns
-    df.drop(columns=["characters","settings","id","publisher","original_title","worldcat_redirect_link","link", "cover_link", "author_link","amazon_redirect_link", "worldcat_redirect_link","isbn", "isbn13", "asin"], inplace = True)
+    df.drop(columns=["characters","settings","id","publisher","original_title","worldcat_redirect_link", "cover_link", "author_link","amazon_redirect_link", "worldcat_redirect_link","isbn", "isbn13", "asin"], inplace = True)
     df.drop_duplicates(inplace=True)
 
     # checking title formating
@@ -179,19 +179,24 @@ def prep_model(df):
     scaler = StandardScaler()
     df["rating_count_stand"] = scaler.fit_transform(df["rating_count"].values.reshape(-1, 1))
     
-    #final drop
-    df_model = df[df["classification"] == "Literature"].copy()
-    df_model.drop(columns=["rating_count","classification","five_star_ratings","four_star_ratings","three_star_ratings","two_star_ratings","one_star_ratings"], inplace=True)
-    df_model.dropna(inplace=True)
-
-    # correcting genre type
+     # correcting genre type
     dict_genre = {"Fiction":0, "Fantasy":1, "Romance":2, "Young Adult":3, "Thriller/Mystery":4,
               "Sequential Art":5,"Science Fiction":6,"Classics":7,"Horror":8,"Poetry":9,"Novels":10,
               "Humor":11,"Adult":12,"Westerns":13,"Other":14,"Drama":15,"Anthologies":16
     }
-    df_model["subgenre"] = df_model["subgenre"].replace(dict_genre)
+    df["subgenre"] = df["subgenre"].replace(dict_genre)
+
+    # drop
+    df_retrieve = df[df["classification"] == "Literature"].copy()
+    df_retrieve.drop(columns=["rating_count","classification"], inplace=True)
+    
+    matrix_corr(df_retrieve.drop("link", axis = 1),"correlation_heatmap_prev")
+    df_retrieve.drop(columns=["five_star_ratings","four_star_ratings","three_star_ratings","two_star_ratings","one_star_ratings"], inplace=True)
+    df_retrieve.dropna(inplace=True)
+
+    df_model = df_retrieve.drop("link", axis=1).copy()
   
-    return df_model
+    return df_model, df_retrieve
 
 def prep_my_data(df):
     """
@@ -223,6 +228,7 @@ def prep_my_data(df):
     df.drop(columns=["description","rating_count"], inplace=True)
   
     return df
+
 
 def save_dataframe(df, name):
     """

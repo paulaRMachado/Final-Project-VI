@@ -1,6 +1,17 @@
 import numpy as np
 from sklearn.cluster import KMeans
 
+def init_random (X,k):
+    init_centroids = np.random.choice(X.shape[0], size=k, replace=False)
+        
+    centroid_dict = {}
+    for i, c in zip(range(k), init_centroids):
+        centroid_dict[i] = X[c]
+
+    cluster_dict = {}
+    for i in range(k):
+        cluster_dict[i] = []
+    return centroid_dict, cluster_dict
 
 def euclidian_distance(p1, p2):
     """
