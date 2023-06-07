@@ -167,10 +167,10 @@ def prep_model(df):
     This function prepares the data for going through the model.
 
     :args:
-        df: a dataframe to be preped for clustering
+    df: a dataframe to be preped for clustering
 
     :returns:
-        df_model: dataframe ready for training
+    df_model: dataframe ready for training
     """
     # droping unnecessary columns
     df.drop(columns=["review_count","title","author","recommended_books","books_in_series"], inplace = True)
@@ -179,7 +179,7 @@ def prep_model(df):
     scaler = StandardScaler()
     df["rating_count_stand"] = scaler.fit_transform(df["rating_count"].values.reshape(-1, 1))
     
-     # correcting genre type
+    # correcting genre type
     dict_genre = {"Fiction":0, "Fantasy":1, "Romance":2, "Young Adult":3, "Thriller/Mystery":4,
               "Sequential Art":5,"Science Fiction":6,"Classics":7,"Horror":8,"Poetry":9,"Novels":10,
               "Humor":11,"Adult":12,"Westerns":13,"Other":14,"Drama":15,"Anthologies":16
@@ -202,7 +202,7 @@ def prep_my_data(df):
     """
     This function prepares the data for going through the model.
     :args:
-        df: a dataframe to be preped for clustering
+    df: a dataframe to be preped for clustering
     """
 
     # correcting genre type
@@ -234,8 +234,8 @@ def save_dataframe(df, name):
     """
     This function save a dataframe under a given name in the data folder.
     :args:
-        df: dataframe to be saved
-        name: name to save under
+    df: dataframe to be saved
+    name: name to save under
     """
     df.to_csv(f'data/{name}.csv', index=False)
     pass

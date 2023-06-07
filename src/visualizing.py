@@ -2,9 +2,12 @@ import numpy as np
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import davies_bouldin_score
 from sklearn.cluster import KMeans
-from sklearn.datasets import make_blobs
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
+import seaborn as sns
+import pandas as pd
+from sklearn.manifold import TSNE
+
 
 def matrix_corr(df, name):
     """
@@ -23,8 +26,7 @@ def matrix_corr(df, name):
         y=list(corr_matrix.index),
         colorscale='RdBu',
         showscale=True,
-        reversescale=True
-    )
+        reversescale=True)
 
     # Customize the layout
     fig.update_layout(
@@ -33,8 +35,7 @@ def matrix_corr(df, name):
         yaxis=dict(title='Features'),
         height=600,
         width=800,
-        template='plotly_white'
-    )
+        template='plotly_white')
 
     fig.write_image(f'image/plots/{name}.png')
     fig.write_html(f'image/plots/{name}.html')
@@ -42,11 +43,9 @@ def matrix_corr(df, name):
     fig.show()
     
 
-
 def elbow_method(df):
     """
     This function calculate the sum of squared distances for each k value and plots graph
-    
     :arg:
         df: dataframe with all the data.
     :returns:
@@ -80,7 +79,6 @@ def silhouette_plot(df):
 
     :Args:
     df: (pandas DataFrame): The input data.
-
     """
     k_values = list(range(2, 11))
     silhouette_scores = []
@@ -142,54 +140,17 @@ def davies_boulding_plot(df):
     fig.show()
 
 
-def kmeans_plot_blobs(n_samples=32000, centers=7, cluster_std=0.60, random_state=0):
+def kmeans_plot_blobs(df):
 
-    X, y_true = make_blobs(n_samples=n_samples, centers=centers, cluster_std=cluster_std, random_state=random_state)
+    tsne = TSNE(n_components=2, random_state=42)
+    tsne_df = pd.DataFrame(tsne.fit_transform(df), columns = ['X', 'Y'] )
 
-    # fit the k-means clustering model
-    kmeans = KMeans(n_clusters=centers)
-    kmeans.fit(X)
-    y_kmeans = kmeans.predict(X)
+    sns.set(rc = {'figure.figsize':(15,8)})
+    sns.scatterplot(x= 'X', y= 'Y',data= tsne_df).set(title= '2D Data Projection');
 
-    # get the coordinates of the centroids
-    centroids = kmeans.cluster_centers_
+    # Plotting K-Means k=7
+    km = KMeans(n_clusters = 7).fit(df)
+    tsne_df['cluster'] = pd.Categorical(km.labels_)
 
-    # create a dictionary that maps each centroid to its coordinates
-    centroid_dict = {i: centroid for i, centroid in enumerate(centroids)}
-
-    # create a dictionary that maps each data point to its cluster
-    cluster_dict = {i: cluster for i, cluster in enumerate(y_kmeans)}
-    
-    fig = go.Figure()
-
-    # color each data point according to its cluster
-    colors = ['blue', 'orange', 'green', 'red', 'purple', 'pink', 'yellow', 'brown', 'grey', 'black']
-    for cluster in np.unique(list(cluster_dict.values())):
-        indices = [i for i, x in enumerate(cluster_dict.values()) if x == cluster]
-        fig.add_trace(go.Scatter(
-            x=X[indices, 0], 
-            y=X[indices, 1], 
-            mode='markers', 
-            marker=dict(color=colors[cluster]), 
-            name=f'Cluster {cluster + 1}'
-        ))
-
-    # Add centroids
-    centroid_x = [centroid_dict[k][0] for k in centroid_dict.keys()]
-    centroid_y = [centroid_dict[k][1] for k in centroid_dict.keys()]
-    fig.add_trace(go.Scatter(
-        x=centroid_x, 
-        y=centroid_y, 
-        mode='markers', 
-        marker=dict(color='black', size=10), 
-        name='Centroids'
-    ))
-
-    # Update layout
-    fig.update_layout(
-        title="K-Means Clustering",
-        legend_title="Legend"
-    )
-    fig.write_image('image/plots/K_Means_Clustering.png')
-    fig.write_html('image/plots/K_Means_Clustering.html') 
-    fig.show()
+    sns.set(rc = {'figure.figsize':(15,8)})
+    sns.scatterplot(x='X', y='Y', hue='cluster', style='cluster', data= tsne_df).set(title= 'K-Means with k=7')
