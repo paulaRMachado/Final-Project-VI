@@ -67,6 +67,16 @@ def predict_and_find_nearest(centroid_dict, cluster_dict, new_data_point):
     # Calculate the distances between the new data point and the data points in the cluster
     distances = [np.linalg.norm(new_data_point - data_point) for data_point in data_points_in_cluster]
 
+
+  # Find the indices of the two points with the minimum distances
+    nearest_point_indices = np.argsort(distances)[:2]
+
+    # Get the nearest and second nearest points from the data points in the cluster
+    nearest_point = data_points_in_cluster[nearest_point_indices[0]]
+    second_nearest_point = data_points_in_cluster[nearest_point_indices[1]]
+
+    return nearest_point, second_nearest_point
+"""
     # Find the index of the point with the minimum distance
     nearest_point_index = np.argmin(distances)
 
@@ -75,3 +85,4 @@ def predict_and_find_nearest(centroid_dict, cluster_dict, new_data_point):
 
     return nearest_point
 
+"""

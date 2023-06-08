@@ -78,7 +78,7 @@ def basic_clean(df):
     df['title'] = df['title'].str.encode('ascii', 'ignore').str.decode('ascii')
     df['title'] = [i.strip() for i in df['title']]
     df = df[df['title'].notnull() & (df['title'] != '')]
-    titles_to_remove = [":", "-", "1", "2","3"]
+    titles_to_remove = [":", "-", "1", "2","3",".."]
     df = df[~df['title'].isin(titles_to_remove)]
 
     # checking author formating
@@ -173,7 +173,7 @@ def prep_model(df):
     df_model: dataframe ready for training
     """
     # droping unnecessary columns
-    df.drop(columns=["review_count","title","author","recommended_books","books_in_series"], inplace = True)
+    df.drop(columns=["review_count","title","author","recommended_books","books_in_series","cover_filename"], inplace = True)
 
     ## transforming columns so model can understand
     scaler = StandardScaler()
@@ -225,7 +225,7 @@ def prep_my_data(df):
     df["average_rating"] = df["average_rating"].str.replace(",", ".")
     df["average_rating"] = df["average_rating"].astype(float)
 
-    df.drop(columns=["description","rating_count","title"], inplace=True)
+    df.drop(columns=["description","rating_count","title","cover_filename"], inplace=True)
   
     return df
 

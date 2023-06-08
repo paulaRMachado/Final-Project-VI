@@ -14,16 +14,19 @@ By recommending books based on the clusters and their centroids, I aim to get pe
 
 ### Data Characteristics
 Check the link for Tableau to see some
+![Tableau link](https://public.tableau.com/app/profile/paula.machado6180/viz/Ironhack-FinalProject_16857816936230/Story1?publish=yes)
 
 ### Preprocessing
 For the model I will only use books classified as LITERATURE.
 
-I removed some qualitative data such as review_count, title, author name, recommended books, books series. Then I used `StandardScaler()` to make rating count more readble for the model and used a dictionary to transform the genres type to integers
+First I had to remove all entries the with Non-ASCII Characters since they are not properly read by NLTK sentiment analyzer.
+
+I removed some qualitative data such as review count, title, author name, recommended books, books series. Then I used `StandardScaler()` to make rating count more readble for the model and used a dictionary to transform the genres type to integers
 
 Finally I drew a correlation matrix to check if I had any features very closely related to one another that would make clustering more difficult:
 ![](image/plots/correlation_heatmap_prev.png)
 
-As rating_count was closely related to all the star ratings, I decided to drop theses five features as well. 
+As rating count was closely related to all the star ratings, I decided to drop theses five features as well. 
 
 This is the final matrix:
 ![](image/plots/correlation_heatmap_final.png)
@@ -80,6 +83,7 @@ Provided that 2 out of the 3 methods indicate a number of clusters between 6 and
 - Regex
 - Natural Language Toolkit
 - Tableau
+- Streamlit
 
 ## Launch
 1. Git clone this repo;
@@ -88,6 +92,4 @@ Provided that 2 out of the 3 methods indicate a number of clusters between 6 and
 4. Choose an index for a book you enjoyed in my list;
 5. Get a recommendation.
 
-## Book table for testing
-Here is a PDF with some books you can look up in the model.
-![Books!!](data/booksPDF.pdf)
+## Future features
