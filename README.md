@@ -13,8 +13,9 @@ The process involves preprocessing the Goodreads dataset, including data cleanin
 By recommending books based on the clusters and their centroids, I aim to get personalized and more accurate book suggestions. Users can provide a book they enjoyed, and the recommendation system will identify the relevant cluster and recommend books from that cluster, enhancing their reading experience and introducing them to new titles within their preferred characteristics.
 
 ### Data Characteristics
-Check the link for Tableau to see some
-![Tableau link](https://public.tableau.com/app/profile/paula.machado6180/viz/Ironhack-FinalProject_16857816936230/Story1?publish=yes)
+Check the link for Tableau to check the original data and insight.
+
+[Tableau link](https://public.tableau.com/app/profile/paula.machado6180/viz/Ironhack-FinalProject_16857816936230/Story1?publish=yes)
 
 ### Preprocessing
 For the model I will only use books classified as LITERATURE.
@@ -88,8 +89,9 @@ Provided that 2 out of the 3 methods indicate a number of clusters between 6 and
 ## Launch
 1. Git clone this repo;
 2. Open your terminal;
-3. Run `main.py` file;
+3. Run `main.py` file or `home.py` if you are able to use streamlit;
 4. Choose an index for a book you enjoyed in my list;
 5. Get a recommendation.
 
-## Future features
+## Future steps
+As the API for Goodreads is being discontinued, a future improvement on the project would be to check if I could scrape the data from a Goodreads page, transform it and find the recommendation.
